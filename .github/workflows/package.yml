@@ -1,0 +1,26 @@
+name: Pack and Release
+
+on:
+  workflow_dispatch: # 允许你手动点击按钮触发打包
+
+permissions:
+  contents: write # 赋予脚本创建 Release 的权限
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Zip repository files
+        run: |
+          # 将所有文件打包，排除 .git 文件夹以减小体积
+          zip -r repo-archive.zip . -x "*.git*"
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Repo Archive Release
+          files: repo-archive.zip
